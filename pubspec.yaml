@@ -1,0 +1,72 @@
+name: freight_hub
+description: "A new Flutter project."
+
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.2.1 <4.0.0'
+
+#--------------------PACKAGES--------------------#
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # utility packages
+  http: ^1.1.0
+  intl: ^0.19.0
+  logger: ^2.0.1
+  url_launcher: ^6.1.12
+  flutter_native_splash: ^2.4.0
+  smooth_page_indicator: ^1.1.0
+  flutter_spinkit: ^5.1.0
+
+  # Icons
+  iconsax_flutter: ^1.0.0
+  cupertino_icons: ^1.0.2
+
+  # state management
+  get: ^4.6.6
+  get_storage: ^2.1.1
+
+#-------------------- ./ PACKAGES END --------------------#
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+
+  #-------------------- LOCAL ASSETS ------------------#
+  assets:
+    - assets/logos/
+    - assets/icons/brands/
+    - assets/images/on_boarding_images/
+    - assets/images/animations/
+    - assets/images/truck_types/
+    - assets/images/truck_pictures/
+
+  fonts:
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins-Light.ttf
+          weight: 300
+        - asset: assets/fonts/Poppins-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Poppins-Italic.ttf
+          style: italic
+        - asset: assets/fonts/Poppins-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Poppins-MediumItalic.ttf
+          weight: 500
+          style: italic
+        - asset: assets/fonts/Poppins-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Poppins-Bold.ttf
+          weight: 800
+        - asset: assets/fonts/Poppins-BoldItalic.ttf
+          weight: 800
+          style: italic
