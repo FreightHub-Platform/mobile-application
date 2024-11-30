@@ -126,7 +126,7 @@ class TTexts {
   static const String personalInformation = "Personal Information";
   static const String personalInfoAddress = "Address";
   static const String personalInfoCity = "City";
-  static const String personalInfoStreet = "Street";
+  static const String personalInfoStreet = "Address";
   static const String personalInfoProvince = "Province";
   static const String personalInfoZipCode = "ZipCode";
   static const String personalInfoNic = "NIC";

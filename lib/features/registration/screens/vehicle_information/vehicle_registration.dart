@@ -44,7 +44,6 @@ class VehicleRegistrationScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               /// Header
-              const SizedBox(height: TSizes.spaceBtwItems), // To adjust for status bar space
               const TProgressBar(value: 0.5),
               const SizedBox(height: TSizes.spaceBtwSections),
               Center(
@@ -106,11 +105,11 @@ class VehicleRegistrationScreen extends StatelessWidget {
                                 value: true,
                                 onChanged: (value) {}
                             ),
-                            CheckboxListTile(
-                                title: const Text('My vehicle has a crane'),
-                                value: false,
-                                onChanged: (value) {}
-                            ),
+                            // CheckboxListTile(
+                            //     title: const Text('My vehicle has a crane'),
+                            //     value: false,
+                            //     onChanged: (value) {}
+                            // ),
 
                             /// Year of Manufacture
                             TextFormField(

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:freight_hub/features/profile/screens/notifications/notifications.dart';
 import 'package:freight_hub/features/shop/screens/home/home.dart';
 import 'package:freight_hub/utils/constants/colors.dart';
 import 'package:freight_hub/utils/helpers/helper_functions.dart';
 import 'package:get/get.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 
+import 'features/profile/screens/driver_profile/driver_profile.dart';
 import 'features/shop/screens/load_board/load_board.dart';
 
 class NavigationMenu extends StatelessWidget {
@@ -45,7 +47,7 @@ class NavigationController extends GetxController {
   final screens = [
     const HomeScreen(),
     const LoadBoardScreen(),
-    Container(color: Colors.orange),
-    Container(color: Colors.blue)
+    const NotificationsScreen(),
+    const DriverProfileScreen()
   ];
 }
