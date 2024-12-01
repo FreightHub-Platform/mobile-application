@@ -14,6 +14,7 @@ import '../../../../../data/services/storage_service.dart';
 import '../../../../../utils/constants/colors.dart';
 import '../../../../../utils/constants/sizes.dart';
 import '../../../../../utils/constants/texts.dart';
+import '../../../../registration/screens/documents/thank_you.dart';
 
 class TLoginForm extends StatefulWidget {
   const TLoginForm({super.key});
@@ -124,7 +125,8 @@ class _TLoginFormState extends State<TLoginForm> {
             );
 
             await Future.delayed(const Duration(seconds: 1));
-            Get.off(() => const RequiredDocuments());
+            // Get.off(() => const RequiredDocuments());
+            Get.off(() => const ThankYouScreen());
 
           } else {
             Get.snackbar(

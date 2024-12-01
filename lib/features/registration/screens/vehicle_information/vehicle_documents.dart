@@ -283,17 +283,18 @@ class _VehicleDocumentsScreenState extends State<VehicleDocumentsScreen> {
       final driverId = await StorageService.getDriverId();
       if (driverId == null) throw Exception('Driver ID is null');
 
-      // Make API call to update Vehicle data
-      final response = await registerDriver1(
-          driverId: driverId,
-          documentData: vehicleDocumentData
-      );
-
-      if (response.statusCode == 200) {
-        Get.to(() => const DocumentSummaryScreen());
-      } else {
-        throw Exception('Failed to submit vehicle documents');
-      }
+      // // Make API call to update Vehicle data
+      // final response = await registerDriver1(
+      //     driverId: driverId,
+      //     documentData: vehicleDocumentData
+      // );
+      //
+      // if (response.statusCode == 200) {
+      //   Get.to(() => const DocumentSummaryScreen());
+      // } else {
+      //   throw Exception('Failed to submit vehicle documents');
+      // }
+      Get.to(() => const DocumentSummaryScreen());
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: ${e.toString()}')),

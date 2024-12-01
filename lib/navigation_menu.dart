@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 
 import 'features/profile/screens/driver_profile/driver_profile.dart';
+import 'features/profile/screens/driver_profile/wallet.dart';
 import 'features/shop/screens/load_board/load_board.dart';
 
 class NavigationMenu extends StatelessWidget {
@@ -29,9 +30,10 @@ class NavigationMenu extends StatelessWidget {
           indicatorColor: darkMode ? TColors.white.withOpacity(0.1) : TColors.black.withOpacity(0.1),
 
           destinations: const [
-            NavigationDestination(icon: Icon(Iconsax.home), label: 'Home'),
+            // NavigationDestination(icon: Icon(Iconsax.home), label: 'Home'),
             NavigationDestination(icon: Icon(Iconsax.activity), label: 'Activities'),
             NavigationDestination(icon: Icon(Iconsax.notification), label: 'Notifications'),
+            NavigationDestination(icon: Icon(Iconsax.wallet), label: 'Wallet'),
             NavigationDestination(icon: Icon(Iconsax.user), label: 'Profile'),
           ],
         ),
@@ -45,9 +47,10 @@ class NavigationController extends GetxController {
   final Rx<int> selectedIndex = 0.obs;
 
   final screens = [
-    const HomeScreen(),
+    // const HomeScreen(),
     const LoadBoardScreen(),
     const NotificationsScreen(),
+    const WalletScreen(),
     const DriverProfileScreen()
   ];
 }
