@@ -8,6 +8,9 @@ class StorageService {
   static const _emailKey = 'saved_email';
   static const _rememberMeKey = 'remember_me';
   static const _driverIdKey = 'driver_id';
+  static const _routeIdKey = 'route_id';
+  static const _poIdKey = 'po_id';
+  static const _sequenceIdKey = 'sequence_id';
 
   // Token management
   static Future<void> saveToken(String token) async {
@@ -65,5 +68,56 @@ class StorageService {
 
   static Future<void> deleteDriverId() async {
     await _storage.delete(key: _driverIdKey);
+  }
+
+  /// Route ID functions
+  static Future<void> saveRouteId(int routeId) async {
+    await _storage.write(key: _routeIdKey, value: routeId.toString());
+  }
+
+  static Future<int?> getRouteId() async {
+    String? routeIdString = await _storage.read(key: _routeIdKey);
+    if (routeIdString != null) {
+      return int.tryParse(routeIdString);
+    }
+    return null;
+  }
+
+  static Future<void> deleteRouteId() async {
+    await _storage.delete(key: _routeIdKey);
+  }
+
+  /// PO ID functions
+  static Future<void> savePoId(int poId) async {
+    await _storage.write(key: _poIdKey, value: poId.toString());
+  }
+
+  static Future<int?> getPoId() async {
+    String? poIdString = await _storage.read(key: _poIdKey);
+    if (poIdString != null) {
+      return int.tryParse(poIdString);
+    }
+    return null;
+  }
+
+  static Future<void> deletePoId() async {
+    await _storage.delete(key: _poIdKey);
+  }
+
+  /// Sequence ID functions
+  static Future<void> saveSequenceId(int sequenceId) async {
+    await _storage.write(key: _sequenceIdKey, value: sequenceId.toString());
+  }
+
+  static Future<int?> getSequenceId() async {
+    String? sequenceIdString = await _storage.read(key: _sequenceIdKey);
+    if (sequenceIdString != null) {
+      return int.tryParse(sequenceIdString);
+    }
+    return null;
+  }
+
+  static Future<void> deleteSequenceId() async {
+    await _storage.delete(key: _sequenceIdKey);
   }
 }

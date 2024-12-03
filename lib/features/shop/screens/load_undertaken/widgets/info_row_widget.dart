@@ -15,10 +15,10 @@ class TInfoRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: TSizes.sm),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(left, style: Theme.of(context).textTheme.labelMedium),
+          Text(left, style: Theme.of(context).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.bold)),
           Text(right, style: Theme.of(context).textTheme.labelMedium),
         ],
       ),

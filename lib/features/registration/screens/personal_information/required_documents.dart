@@ -10,6 +10,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import '../../../../data/api/get_driver.dart';
 import '../../../../utils/constants/colors.dart';
+import '../vehicle_information/vehicle_registration.dart';
 import '../vehicle_information/vehicle_selection.dart';
 
 class RequiredDocuments extends StatefulWidget {
@@ -59,7 +60,11 @@ class _RequiredDocumentsState extends State<RequiredDocuments> {
           // Navigate to another screen
           Get.off(() => const VehicleSelectionScreen());
           return;
-        } // Add more here
+        } else if (data['data']['driver']['completion'] == 3) {
+          // Navigate to another screen
+          Get.off(() => const VehicleRegistrationScreen());
+          return;
+        }// Add more here
       } else {
         throw Exception('Failed to load driver data: ${response.reasonPhrase}');
       }

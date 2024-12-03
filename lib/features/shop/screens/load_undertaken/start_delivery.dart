@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:freight_hub/data/api/get_route_status_mobile.dart';
-import 'package:freight_hub/features/shop/screens/load_in_transit/po_completed.dart';
 import 'package:freight_hub/features/shop/screens/load_undertaken/start_delivery.dart';
+import 'package:freight_hub/features/shop/screens/load_undertaken/widgets/call_feature.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:freight_hub/features/shop/screens/load_undertaken/start_trip.dart';
@@ -11,24 +11,21 @@ import 'package:freight_hub/features/shop/screens/load_undertaken/widgets/info_r
 import 'package:get/get.dart';
 
 import '../../../../common/widgets/otp_screen/otp_screen.dart';
-import '../../../../common/widgets/success_screen/success_screen_2.dart';
 import '../../../../data/api/update_route_status.dart';
 import '../../../../data/services/storage_service.dart';
 import '../../../../utils/constants/colors.dart';
 import '../../../../utils/constants/sizes.dart';
 import '../../../../utils/constants/texts.dart';
-import '../job_complete/job_completed.dart';
 import '../load_in_transit/load_in_transit.dart';
-import '../load_undertaken/widgets/call_feature.dart';
 
-class PoCompletedScreen extends StatefulWidget {
-  const PoCompletedScreen({super.key});
+class ArrivedToPickupScreen extends StatefulWidget {
+  const ArrivedToPickupScreen({super.key});
 
   @override
-  _PoCompletedScreenState createState() => _PoCompletedScreenState();
+  _ArrivedToPickupScreenState createState() => _ArrivedToPickupScreenState();
 }
 
-class _PoCompletedScreenState extends State<PoCompletedScreen> {
+class _ArrivedToPickupScreenState extends State<ArrivedToPickupScreen> {
   // Variables to store API response data
   String _routeName = 'Loading...';
   String _pickupDate = '*****';
@@ -70,60 +67,52 @@ class _PoCompletedScreenState extends State<PoCompletedScreen> {
           final consignerContact = responseData['data'][2]['consignerContact1'];
           final consignerContact2 = responseData['data'][3]['consignerContact2'];
 
-          // String pickupLocation = consigner;
-          // String dropOffLocation = posData[0]['storeName'];
-          //
-          // StorageService.saveSequenceId(1);
-          // StorageService.savePoId(posData[0]['purchaseOrderId']);
+          String pickupLocation = consigner;
+          String dropOffLocation = posData[0]['storeName'];
 
-          final int? poId = await StorageService.getPoId();
-          if (poId == null) {
-            throw Exception('route ID is null');
-          }
+          StorageService.saveSequenceId(1);
+          StorageService.savePoId(posData[0]['purchaseOrderId']);
 
-          String pickupLocation = "";
-          String dropOffLocation = "";
+          // final int? poId = await StorageService.getPoId();
+          // String pickupLocation = "";
+          // String dropOffLocation = "";
+          // if (poId == null) {
+          //   pickupLocation = consigner;
+          //   dropOffLocation = posData[0]['storeName'];
+          // } else {
+          //   final int? sequenceId = await StorageService.getSequenceId();
+          //   if (sequenceId == null) {
+          //     StorageService.saveSequenceId(1);
+          //   } else {
+          //     StorageService.saveSequenceId(await StorageService.getSequenceId() + 1);
+          //   }
+          //   dropOffLocation =
+          //   dropL
+          // }
 
-          final int? sequenceId = await StorageService.getSequenceId();
-          if (sequenceId == null) {
-            throw Exception('route ID is null');
-          } else if (sequenceId == 1) {
-            pickupLocation = consigner;
-            dropOffLocation = posData[0]['storeName'];
+          setState(() {
 
             _consigner = consigner.toString() ?? '';
             _consignerContact = consignerContact.toString() ?? '';
             _consignee = posData[0]['storeName'] ?? '';
             _consigneeContact = posData[0]['storeContact'].toString() ?? '';
 
-          } else {
-            pickupLocation = posData[sequenceId - 2]['storeName'];
-            dropOffLocation = posData[sequenceId - 1]['storeName'];
-
-            _consigner = posData[sequenceId - 2]['storeName'] ?? '';
-            _consignerContact = posData[sequenceId - 2]['storeContact'].toString() ?? '';
-            _consignee = posData[sequenceId - 1]['storeName'] ?? '';
-            _consigneeContact = posData[sequenceId - 1]['storeContact'].toString() ?? '';
-          }
-
-          setState(() {
             // Set pickup location details
-            _routeName = 'Arrived to $dropOffLocation';
+            _routeName = 'Let\'s Drive from $pickupLocation to $dropOffLocation';
             _pickupDate = orderData['pickupDate'] ?? '*****';
             _pickupFromTime = orderData['fromTime'] ?? '*****';
             _pickupToTime = orderData['toTime'] ?? '*****';
 
             // Set latitude and longitude
-            _pickupLat = posData[sequenceId - 1]['dropLat'] ?? 0.0;
-            _pickupLng = posData[sequenceId - 1]['dropLng']?? 0.0;
+            _pickupLat = orderData['pickupLocation']['lat'] ?? 0.0;
+            _pickupLng = orderData['pickupLocation']['lng'] ?? 0.0;
 
             // Set purchase orders
             _purchaseOrders = posData ?? [];
-
-            _allItemsString = _purchaseOrders[sequenceId-1]['items'].map((item) =>
+            List<dynamic> allItems = _purchaseOrders.expand((po) => po['items']).toList();
+            _allItemsString = allItems.map((item) =>
             "${item['itemName']} (Weight: ${item['weight']}, CBM: ${item['cbm']})"
             ).join(', ');
-
           });
         }
       } else {
@@ -140,68 +129,69 @@ class _PoCompletedScreenState extends State<PoCompletedScreen> {
     }
   }
 
-  // Future<void> _updateRouteStatus() async {
-  //   try {
-  //     // Show loading indicator
-  //     showDialog(
-  //       context: context,
-  //       barrierDismissible: false,
-  //       builder: (BuildContext context) {
-  //         return const Center(
-  //           child: CircularProgressIndicator(),
-  //         );
-  //       },
-  //     );
-  //
-  //     // Get.off(() => const StartTripScreen());
-  //     final int? routeId = await StorageService.getRouteId();
-  //     if (routeId == null) {
-  //       throw Exception('route ID is null');
-  //     }
-  //
-  //     final int? dpoId = await StorageService.getPoId();
-  //     if (dpoId == null) {
-  //       throw Exception('Driver ID is null');
-  //     }
-  //
-  //     // Make API call to update route status
-  //     final response = await startUnloading(poId: dpoId, routeId: routeId);
-  //
-  //     // Close loading indicator
-  //     Navigator.of(context).pop();
-  //
-  //     // Check API response
-  //     if (response.statusCode == 200) {
-  //       // Successfully updated status
-  //       Get.off(() => const PoCompletedScreen());
-  //     } else {
-  //       // Handle error
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         const SnackBar(
-  //           content: Text('Failed to update route status'),
-  //           backgroundColor: Colors.red,
-  //         ),
-  //       );
-  //     }
-  //   } catch (e) {
-  //     // Close loading indicator in case of error
-  //     Navigator.of(context).pop();
-  //
-  //     // Show error message
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(
-  //         content: Text('Error updating route status: $e'),
-  //         backgroundColor: Colors.red,
-  //       ),
-  //     );
-  //   }
-  // }
+  Future<void> _updateRouteStatus() async {
+    try {
+      // Show loading indicator
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+      );
+
+      Get.off(() => const StartTripScreen());
+
+      // final int? routeId = await StorageService.getRouteId();
+      // if (routeId == null) {
+      //   throw Exception('route ID is null');
+      // }
+      //
+      // final int? driverId = await StorageService.getDriverId();
+      // if (driverId == null) {
+      //   throw Exception('Driver ID is null');
+      // }
+      //
+      // // Make API call to update route status
+      // final response = await updateArrival(driverId: driverId, routeId: routeId);
+      //
+      // // Close loading indicator
+      // Navigator.of(context).pop();
+      //
+      // // Check API response
+      // if (response.statusCode == 200) {
+      //   // Successfully updated status
+      //   Get.off(() => const StartTripScreen());
+      // } else {
+      //   // Handle error
+      //   ScaffoldMessenger.of(context).showSnackBar(
+      //     const SnackBar(
+      //       content: Text('Failed to update route status'),
+      //       backgroundColor: Colors.red,
+      //     ),
+      //   );
+      // }
+    } catch (e) {
+      // Close loading indicator in case of error
+      Navigator.of(context).pop();
+
+      // Show error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error updating route status: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Delivery Confirmation'),
+        title: const Text('Loading'),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -240,7 +230,7 @@ class _PoCompletedScreenState extends State<PoCompletedScreen> {
                       // ),
                       const SizedBox(height: TSizes.spaceBtwItems),
                       TInfoRow(left: 'Pickup Date', right: _pickupDate),
-                      TInfoRow(left: 'Items to Drop', right: _allItemsString),
+                      TInfoRow(left: 'Items to Pickup', right: _allItemsString),
                       // TInfoRow(left: 'Pickup From Time', right: _pickupFromTime),
                       // TInfoRow(left: 'Pickup To Time', right: _pickupToTime),
                       const SizedBox(height: TSizes.spaceBtwItems),
@@ -250,7 +240,7 @@ class _PoCompletedScreenState extends State<PoCompletedScreen> {
                           decoration: const BoxDecoration(
                             color: TColors.info,
                           ),
-                          child: Text('Unloading in Progress', style: Theme.of(context).textTheme.titleMedium),
+                          child: Text('Loading in Progress', style: Theme.of(context).textTheme.titleMedium),
                         ),
                       ),
                     ],
@@ -264,7 +254,7 @@ class _PoCompletedScreenState extends State<PoCompletedScreen> {
                   GoogleMapsLauncher.openMapForLocation(
                     latitude: _pickupLat,
                     longitude: _pickupLng,
-                    label: 'Drop Off Location', // You can customize this
+                    label: 'Pickup Location', // You can customize this
                   );
                 },
                 child: const Row(
@@ -317,31 +307,33 @@ class _PoCompletedScreenState extends State<PoCompletedScreen> {
                           throw Exception('route ID is null');
                         }
 
+                        final int? driverId = await StorageService.getDriverId();
+                        if (driverId == null) {
+                          throw Exception('Driver ID is null');
+                        }
+
                         final int? poId = await StorageService.getPoId();
                         if (poId == null) {
                           throw Exception('PO ID is null');
                         }
 
-                        print('RouteId $routeId, PoId $poId, otp ${int.tryParse(otp)}');
+                        final response = await updateDeliveryStart(driverId: driverId, routeId: routeId, poId: poId, otp: int.tryParse(otp));
 
-                        final response = await finishUnloading(routeId: routeId, poId: poId, otp: int.tryParse(otp));
-                        // print(await response.stream.bytesToString());
-                        // return response.statusCode == 200;
-                        return true;
+                        return response.statusCode == 200;
                       } catch (e) {
                         return false;
                       }
                     },
-                    onPressed: () => Get.off(() => const JobCompletedScreen()),
-                    otpTitle: TTexts.consigneesOtpTitle,
-                    otpSubTitle: TTexts.consigneesOtpSubTitle,
+                    onPressed: () => Get.off(() => const LoadInTransitScreen()),
+                    otpTitle: TTexts.consignersOtpTitle,
+                    otpSubTitle: TTexts.consignersOtpSubTitle,
                     buttonMessage: TTexts.verify,
                     hasResendOption: false,
                   )),
                   child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(TTexts.markCompletion),
+                      Text('Start Delivery'),
                     ],
                   ),
                 ),
@@ -355,30 +347,25 @@ class _PoCompletedScreenState extends State<PoCompletedScreen> {
 }
 
 // import 'package:flutter/material.dart';
-// import 'package:freight_hub/common/widgets/otp_screen/otp_screen.dart';
-// import 'package:freight_hub/common/widgets/success_screen/success_screen_2.dart';
-// import 'package:freight_hub/features/shop/screens/job_complete/job_completed.dart';
-// import 'package:freight_hub/features/shop/screens/job_complete/job_report.dart';
+// import 'package:freight_hub/features/shop/screens/load_undertaken/start_trip.dart';
 // import 'package:freight_hub/features/shop/screens/load_undertaken/widgets/call_info_row_widget.dart';
+// import 'package:freight_hub/features/shop/screens/load_undertaken/widgets/google_map_launcher.dart';
 // import 'package:freight_hub/features/shop/screens/load_undertaken/widgets/info_row_widget.dart';
 // import 'package:get/get.dart';
-// import 'package:get/get_core/src/get_main.dart';
 //
-// import '../../../../data/api/update_route_status.dart';
-// import '../../../../data/services/storage_service.dart';
 // import '../../../../utils/constants/colors.dart';
 // import '../../../../utils/constants/sizes.dart';
 // import '../../../../utils/constants/texts.dart';
-// import 'load_in_transit.dart';
+// import 'package:url_launcher/url_launcher.dart';
 //
-// class PoCompletedScreen extends StatelessWidget {
-//   const PoCompletedScreen({super.key});
+// class ArrivedToPickupScreen extends StatelessWidget {
+//   const ArrivedToPickupScreen({super.key});
 //
 //   @override
 //   Widget build(BuildContext context) {
 //     return Scaffold(
 //       appBar: AppBar(
-//         title: const Text(TTexts.deliveryConfirmation),
+//         title: const Text('sample'),
 //       ),
 //       body: SingleChildScrollView(
 //         child: Padding(
@@ -411,15 +398,15 @@ class _PoCompletedScreenState extends State<PoCompletedScreen> {
 //                         child: const Row(
 //                           mainAxisAlignment: MainAxisAlignment.center,
 //                           children: [
-//                             Text(TTexts.jobSummaryTitle),
+//                             Text(TTexts.loadInfoTitle),
 //                           ],
 //                         ),
 //                       ),
 //                       const SizedBox(height: TSizes.spaceBtwItems),
-//                       const TInfoRow(left: 'Current Delivery', right: 'Total Distance Remaining'),
+//                       const TInfoRow(left: 'Pickup Date', right: 'Pickup Time'),
 //                       const TInfoRow(left: '*****', right: '*****'),
-//                       const TInfoRow(left: 'Remaining P.O.s', right: ''),
-//                       const TInfoRow(left: '*****', right: ''),
+//                       const TInfoRow(left: 'Final Drop-off Date', right: 'Final Drop-off Time'),
+//                       const TInfoRow(left: '*****', right: '*****'),
 //
 //                       const SizedBox(height: TSizes.spaceBtwItems),
 //                       Center(
@@ -429,7 +416,7 @@ class _PoCompletedScreenState extends State<PoCompletedScreen> {
 //                             color: TColors.info, // Replace with your color
 //                             // borderRadius: BorderRadius.circular(TSizes.md),
 //                           ),
-//                           child: Text(TTexts.unloadInProgress, style: Theme.of(context).textTheme.titleMedium
+//                           child: Text(TTexts.arrivalInProgress, style: Theme.of(context).textTheme.titleMedium
 //                           ),
 //                         ),
 //                       ),
@@ -439,7 +426,14 @@ class _PoCompletedScreenState extends State<PoCompletedScreen> {
 //               ),
 //               const SizedBox(height: TSizes.spaceBtwItems),
 //               TextButton(
-//                 onPressed: () {},
+//                 onPressed: () {
+//                   // Example usage
+//                   GoogleMapsLauncher.openMapForLocation(
+//                     latitude: 37.7749, // Example: San Francisco
+//                     longitude: -122.4194,
+//                     label: 'San Francisco', // Optional
+//                   );
+//                 },
 //                 child: const Row(
 //                   children: [
 //                     Icon(Icons.map),
@@ -467,55 +461,11 @@ class _PoCompletedScreenState extends State<PoCompletedScreen> {
 //                       padding: const EdgeInsets.symmetric(vertical: TSizes.sm),
 //                       side: const BorderSide(color: TColors.primary)
 //                   ),
-//                   onPressed: () => Get.to(() => OtpScreen(
-//                     validateOtpApi: (otp) async {
-//                       // Return true if OTP is valid, false otherwise
-//                       try {
-//                         final int? routeId = await StorageService.getRouteId();
-//                         if (routeId == null) {
-//                           throw Exception('route ID is null');
-//                         }
-//
-//                         final int? poId = await StorageService.getPoId();
-//                         if (poId == null) {
-//                           throw Exception('PO ID is null');
-//                         }
-//
-//                         final response = await finishUnloading(routeId: routeId, poId: poId, otp: int.tryParse(otp));
-//
-//                         return response.statusCode == 200;
-//                       } catch (e) {
-//                         return false;
-//                       }
-//                     },
-//                     onPressed: () => Get.off(() => SuccessScreen2(
-//                           successTitle: TTexts.poCompleteSuccess,
-//                           successSubTitle: "2 more to go!",
-//                           buttonMessage: TTexts.continueDelivery,
-//                           onPressed: () => Get.off(() => const JobCompletedScreen()),
-//                         )
-//                     ),
-//                     otpTitle: TTexts.consignersOtpTitle,
-//                     otpSubTitle: TTexts.consignersOtpSubTitle,
-//                     buttonMessage: TTexts.verify,
-//                     hasResendOption: false,
-//                   )),
-//                   // onPressed: () => Get.to(() => OtpScreen(
-//                   //   onPressed: () => Get.off(() => SuccessScreen2(
-//                   //     successTitle: TTexts.poCompleteSuccess,
-//                   //     successSubTitle: "2 more to go!",
-//                   //     buttonMessage: TTexts.continueDelivery,
-//                   //     onPressed: () => Get.off(() => const JobCompletedScreen()),
-//                   //   )),
-//                   //   otpTitle: TTexts.consigneesOtpTitle,
-//                   //   otpSubTitle: TTexts.consigneesOtpSubTitle,
-//                   //   buttonMessage: TTexts.verify,
-//                   //   hasResendOption: false,
-//                   // )),
+//                   onPressed: () => Get.off(() => const StartTripScreen()),
 //                   child: const Row(
 //                     mainAxisAlignment: MainAxisAlignment.center,
 //                     children: [
-//                       Text(TTexts.markCompletion),
+//                       Text(TTexts.markArrival),
 //                     ],
 //                   ),
 //                 ),

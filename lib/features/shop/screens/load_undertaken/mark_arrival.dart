@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:freight_hub/data/api/get_route_status_mobile.dart';
-import 'package:freight_hub/features/shop/screens/load_in_transit/po_completed.dart';
 import 'package:freight_hub/features/shop/screens/load_undertaken/start_delivery.dart';
+import 'package:freight_hub/features/shop/screens/load_undertaken/widgets/call_feature.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:freight_hub/features/shop/screens/load_undertaken/start_trip.dart';
@@ -10,23 +10,20 @@ import 'package:freight_hub/features/shop/screens/load_undertaken/widgets/google
 import 'package:freight_hub/features/shop/screens/load_undertaken/widgets/info_row_widget.dart';
 import 'package:get/get.dart';
 
-import '../../../../common/widgets/otp_screen/otp_screen.dart';
 import '../../../../data/api/update_route_status.dart';
 import '../../../../data/services/storage_service.dart';
 import '../../../../utils/constants/colors.dart';
 import '../../../../utils/constants/sizes.dart';
 import '../../../../utils/constants/texts.dart';
-import '../load_in_transit/load_in_transit.dart';
-import '../load_undertaken/widgets/call_feature.dart';
 
-class LoadInTransitScreen extends StatefulWidget {
-  const LoadInTransitScreen({super.key});
+class LoadUndertakenScreen extends StatefulWidget {
+  const LoadUndertakenScreen({super.key});
 
   @override
-  _LoadInTransitScreenState createState() => _LoadInTransitScreenState();
+  _LoadUndertakenScreenState createState() => _LoadUndertakenScreenState();
 }
 
-class _LoadInTransitScreenState extends State<LoadInTransitScreen> {
+class _LoadUndertakenScreenState extends State<LoadUndertakenScreen> {
   // Variables to store API response data
   String _routeName = 'Loading...';
   String _pickupDate = '*****';
@@ -38,8 +35,6 @@ class _LoadInTransitScreenState extends State<LoadInTransitScreen> {
   String _allItemsString = "";
   String _consigner = "";
   String _consignerContact = "";
-  String _consignee = "";
-  String _consigneeContact = "";
 
   @override
   void initState() {
@@ -68,60 +63,28 @@ class _LoadInTransitScreenState extends State<LoadInTransitScreen> {
           final consignerContact = responseData['data'][2]['consignerContact1'];
           final consignerContact2 = responseData['data'][3]['consignerContact2'];
 
-          // String pickupLocation = consigner;
-          // String dropOffLocation = posData[0]['storeName'];
-          //
-          // StorageService.saveSequenceId(1);
-          // StorageService.savePoId(posData[0]['purchaseOrderId']);
-
-          final int? poId = await StorageService.getPoId();
-          if (poId == null) {
-            throw Exception('route ID is null');
-          }
-
-          String pickupLocation = "";
-          String dropOffLocation = "";
-
-          final int? sequenceId = await StorageService.getSequenceId();
-          if (sequenceId == null) {
-            throw Exception('route ID is null');
-          } else if (sequenceId == 1) {
-            pickupLocation = consigner;
-            dropOffLocation = posData[0]['storeName'];
+          setState(() {
 
             _consigner = consigner.toString() ?? '';
             _consignerContact = consignerContact.toString() ?? '';
-            _consignee = posData[0]['storeName'] ?? '';
-            _consigneeContact = posData[0]['storeContact'].toString() ?? '';
-
-          } else {
-            pickupLocation = posData[sequenceId - 2]['storeName'];
-            dropOffLocation = posData[sequenceId - 1]['storeName'];
-
-            _consigner = posData[sequenceId - 2]['storeName'] ?? '';
-            _consignerContact = posData[sequenceId - 2]['storeContact'].toString() ?? '';
-            _consignee = posData[sequenceId - 1]['storeName'] ?? '';
-            _consigneeContact = posData[sequenceId - 1]['storeContact'].toString() ?? '';
-          }
-
-          setState(() {
 
             // Set pickup location details
-            _routeName = 'Driving from $pickupLocation to $dropOffLocation';
+            _routeName = 'Driving to $consigner';
             _pickupDate = orderData['pickupDate'] ?? '*****';
             _pickupFromTime = orderData['fromTime'] ?? '*****';
             _pickupToTime = orderData['toTime'] ?? '*****';
 
             // Set latitude and longitude
-            _pickupLat = posData[sequenceId - 1]['dropLat'] ?? 0.0;
-            _pickupLng = posData[sequenceId - 1]['dropLng']?? 0.0;
+            _pickupLat = orderData['pickupLocation']['lat'] ?? 0.0;
+            _pickupLng = orderData['pickupLocation']['lng'] ?? 0.0;
 
             // Set purchase orders
             _purchaseOrders = posData ?? [];
-
-            _allItemsString = _purchaseOrders[sequenceId-1]['items'].map((item) =>
+            List<dynamic> allItems = _purchaseOrders.expand((po) => po['items']).toList();
+            _allItemsString = allItems.map((item) =>
             "${item['itemName']} (Weight: ${item['weight']}, CBM: ${item['cbm']})"
             ).join(', ');
+
           });
         }
       } else {
@@ -138,7 +101,7 @@ class _LoadInTransitScreenState extends State<LoadInTransitScreen> {
     }
   }
 
-  Future<void> _updateRouteStatus() async {
+  Future<void> _updateRouteStatusAndStartTrip() async {
     try {
       // Show loading indicator
       showDialog(
@@ -151,19 +114,18 @@ class _LoadInTransitScreenState extends State<LoadInTransitScreen> {
         },
       );
 
-      // Get.off(() => const StartTripScreen());
       final int? routeId = await StorageService.getRouteId();
       if (routeId == null) {
         throw Exception('route ID is null');
       }
 
-      final int? dpoId = await StorageService.getPoId();
-      if (dpoId == null) {
+      final int? driverId = await StorageService.getDriverId();
+      if (driverId == null) {
         throw Exception('Driver ID is null');
       }
 
       // Make API call to update route status
-      final response = await startUnloading(poId: dpoId, routeId: routeId);
+      final response = await updateArrival(driverId: driverId, routeId: routeId);
 
       // Close loading indicator
       Navigator.of(context).pop();
@@ -171,7 +133,7 @@ class _LoadInTransitScreenState extends State<LoadInTransitScreen> {
       // Check API response
       if (response.statusCode == 200) {
         // Successfully updated status
-        Get.off(() => const PoCompletedScreen());
+        Get.off(() => const ArrivedToPickupScreen());
       } else {
         // Handle error
         ScaffoldMessenger.of(context).showSnackBar(
@@ -199,7 +161,7 @@ class _LoadInTransitScreenState extends State<LoadInTransitScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Ongoing'),
+        title: const Text('Arriving to Pickup'),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -237,8 +199,8 @@ class _LoadInTransitScreenState extends State<LoadInTransitScreen> {
                       //   ),
                       // ),
                       const SizedBox(height: TSizes.spaceBtwItems),
-                      TInfoRow(left: 'Date', right: _pickupDate),
-                      TInfoRow(left: 'Items to Drop', right: _allItemsString),
+                      TInfoRow(left: 'Pickup Date', right: _pickupDate),
+                      TInfoRow(left: 'Items to Pickup', right: _allItemsString),
                       // TInfoRow(left: 'Pickup From Time', right: _pickupFromTime),
                       // TInfoRow(left: 'Pickup To Time', right: _pickupToTime),
                       const SizedBox(height: TSizes.spaceBtwItems),
@@ -248,7 +210,7 @@ class _LoadInTransitScreenState extends State<LoadInTransitScreen> {
                           decoration: const BoxDecoration(
                             color: TColors.info,
                           ),
-                          child: Text('Load is Ongoing', style: Theme.of(context).textTheme.titleMedium),
+                          child: Text(TTexts.arrivalInProgress, style: Theme.of(context).textTheme.titleMedium),
                         ),
                       ),
                     ],
@@ -262,7 +224,7 @@ class _LoadInTransitScreenState extends State<LoadInTransitScreen> {
                   GoogleMapsLauncher.openMapForLocation(
                     latitude: _pickupLat,
                     longitude: _pickupLng,
-                    label: 'Drop Off Location', // You can customize this
+                    label: 'Pickup Location', // You can customize this
                   );
                 },
                 child: const Row(
@@ -283,19 +245,10 @@ class _LoadInTransitScreenState extends State<LoadInTransitScreen> {
               //
               // Text(TTexts.loadInfoConsignee, style: Theme.of(context).textTheme.headlineSmall),
               // const TCallInfoRow(location: 'MAS Linea Aqua Pvt. Lt'),
-              // const SizedBox(height: TSizes.spaceBtwSections),
-
               Text(TTexts.loadInfoConsignor, style: Theme.of(context).textTheme.headlineSmall),
               TCallInfoRow(
                 location: _consigner,
                 phoneNumber: _consignerContact,
-              ),
-              const SizedBox(height: TSizes.spaceBtwItems),
-
-              Text(TTexts.loadInfoConsignee, style: Theme.of(context).textTheme.headlineSmall),
-              TCallInfoRow(
-                location: _consignee,
-                phoneNumber: _consigneeContact,
               ),
               const SizedBox(height: TSizes.spaceBtwSections),
 
@@ -306,7 +259,7 @@ class _LoadInTransitScreenState extends State<LoadInTransitScreen> {
                       padding: const EdgeInsets.symmetric(vertical: TSizes.sm),
                       side: const BorderSide(color: TColors.primary)
                   ),
-                  onPressed: () => _updateRouteStatus(),
+                  onPressed: () => _updateRouteStatusAndStartTrip(),
                   child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [

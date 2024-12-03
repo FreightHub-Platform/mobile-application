@@ -14,12 +14,27 @@ class TLoadInfoField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: TSizes.xs),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(title, style: const TextStyle(color: Colors.grey)),
-          Text(value, style: const TextStyle(color: Colors.grey)),
-        ],
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                    color: Colors.grey,
+                    fontWeight: FontWeight.bold
+                ),
+              ),
+              Text(
+                value,
+                style: const TextStyle(color: Colors.grey),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          );
+        },
       ),
     );
   }

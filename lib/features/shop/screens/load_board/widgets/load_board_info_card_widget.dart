@@ -86,19 +86,19 @@ class TLoadBoardInfoCard extends StatelessWidget {
             const SizedBox(height: TSizes.spaceBtwItems),
 
             /// Buttons
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: TColors.primary,
-                padding: const EdgeInsets.symmetric(vertical: TSizes.sm),
-              ),
-              onPressed: () => Get.to(() => const ConfirmLoadScreen()),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(TTexts.bookLoadNow),
-                ],
-              ),
-            ),
+            // ElevatedButton(
+            //   style: ElevatedButton.styleFrom(
+            //     backgroundColor: TColors.primary,
+            //     padding: const EdgeInsets.symmetric(vertical: TSizes.sm),
+            //   ),
+            //   onPressed: () => Get.to(() => const ConfirmLoadScreen()),
+            //   child: const Row(
+            //     mainAxisAlignment: MainAxisAlignment.center,
+            //     children: [
+            //       Text(TTexts.bookLoadNow),
+            //     ],
+            //   ),
+            // ),
           ],
         ),
       ),

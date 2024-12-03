@@ -24,11 +24,12 @@ Future<http.StreamedResponse> registerDriver0({
   var request = http.Request('POST', Uri.parse('$tCoreBaseUrl/driver/register/0'))
     ..body = json.encode({
       "id": driverId,
-      "fname": firstName,
-      "lname": lastName,
+      "fName": firstName,
+      "lName": lastName,
       "contactNumber": phone,
       "nic": nic,
       "addressLine1": street,
+      "addressLine2": "",
       "city": city,
       "province": province,
       "postalCode": zipCode
