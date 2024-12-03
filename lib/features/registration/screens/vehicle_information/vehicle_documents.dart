@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:freight_hub/data/api/register_vehicle_1.dart';
 import 'package:freight_hub/utils/constants/sizes.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -281,20 +282,32 @@ class _VehicleDocumentsScreenState extends State<VehicleDocumentsScreen> {
 
       // Get driver ID
       final driverId = await StorageService.getDriverId();
-      if (driverId == null) throw Exception('Driver ID is null');
+      if (driverId == null) {
+        throw Exception('Driver ID is null');
+      }
 
-      // // Make API call to update Vehicle data
-      // final response = await registerDriver1(
-      //     driverId: driverId,
-      //     documentData: vehicleDocumentData
-      // );
-      //
-      // if (response.statusCode == 200) {
-      //   Get.to(() => const DocumentSummaryScreen());
-      // } else {
-      //   throw Exception('Failed to submit vehicle documents');
-      // }
-      Get.to(() => const DocumentSummaryScreen());
+      // Get driver ID
+      var vehicleId = await StorageService.getVehicleId();
+      if (vehicleId == null) {
+        // throw Exception('Driver ID is null');
+        vehicleId = 1;
+      }
+
+      // Make API call to update Vehicle data
+      final response = await registerVehicle1(
+          driverId: driverId,
+          vehicleId: vehicleId,
+          vehicleDocumentData: vehicleDocumentData
+      );
+
+      print(await response.stream.bytesToString());
+
+      if (response.statusCode == 200) {
+        Get.to(() => const DocumentSummaryScreen());
+      } else {
+        throw Exception('Failed to submit vehicle documents');
+      }
+      // Get.to(() => const DocumentSummaryScreen());
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: ${e.toString()}')),

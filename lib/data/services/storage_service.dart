@@ -11,6 +11,7 @@ class StorageService {
   static const _routeIdKey = 'route_id';
   static const _poIdKey = 'po_id';
   static const _sequenceIdKey = 'sequence_id';
+  static const _vehicleIdKey = 'vehicle_id';
 
   // Token management
   static Future<void> saveToken(String token) async {
@@ -119,5 +120,22 @@ class StorageService {
 
   static Future<void> deleteSequenceId() async {
     await _storage.delete(key: _sequenceIdKey);
+  }
+
+  /// Vehicle ID functions
+  static Future<void> saveVehicleId(int vehicleId) async {
+    await _storage.write(key: _vehicleIdKey, value: vehicleId.toString());
+  }
+
+  static Future<int?> getVehicleId() async {
+    String? vehicleIdString = await _storage.read(key: _vehicleIdKey);
+    if (vehicleIdString != null) {
+      return int.tryParse(vehicleIdString);
+    }
+    return null;
+  }
+
+  static Future<void> deleteVehicleId() async {
+    await _storage.delete(key: _vehicleIdKey);
   }
 }

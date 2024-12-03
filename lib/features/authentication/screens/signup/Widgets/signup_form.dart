@@ -11,6 +11,7 @@ import '../../../../../utils/helpers/helper_functions.dart';
 
 import 'package:http/http.dart' as http;
 
+import '../../login/login.dart';
 import '../verify_email.dart';
 
 class TSignUpForm extends StatefulWidget {
@@ -115,7 +116,7 @@ class _TSignUpFormState extends State<TSignUpForm> {
           );
 
           await Future.delayed(const Duration(seconds: 1));
-          Get.to(() => const VerifyEmailScreen());
+          Get.to(() => const LoginScreen());
         } else {
           // Handle error response
           throw Exception('Registration failed: ${response.reasonPhrase}');

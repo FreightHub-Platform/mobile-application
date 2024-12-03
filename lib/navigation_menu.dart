@@ -32,7 +32,7 @@ class NavigationMenu extends StatelessWidget {
           destinations: const [
             // NavigationDestination(icon: Icon(Iconsax.home), label: 'Home'),
             NavigationDestination(icon: Icon(Iconsax.activity), label: 'Activities'),
-            NavigationDestination(icon: Icon(Iconsax.notification), label: 'Notifications'),
+            // NavigationDestination(icon: Icon(Iconsax.notification), label: 'Notifications'),
             NavigationDestination(icon: Icon(Iconsax.wallet), label: 'Wallet'),
             NavigationDestination(icon: Icon(Iconsax.user), label: 'Profile'),
           ],
@@ -49,7 +49,7 @@ class NavigationController extends GetxController {
   final screens = [
     // const HomeScreen(),
     const LoadBoardScreen(),
-    const NotificationsScreen(),
+    // const NotificationsScreen(),
     const WalletScreen(),
     const DriverProfileScreen()
   ];

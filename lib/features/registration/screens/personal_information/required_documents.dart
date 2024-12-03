@@ -4,12 +4,15 @@ import 'package:freight_hub/data/services/storage_service.dart';
 import 'package:freight_hub/features/registration/screens/personal_information/personal_documents.dart';
 import 'package:freight_hub/features/registration/screens/personal_information/personal_information.dart';
 import 'package:freight_hub/features/registration/screens/personal_information/widgets/progress_bar.dart';
+import 'package:freight_hub/features/shop/screens/load_board/load_board.dart';
 import 'package:freight_hub/utils/constants/sizes.dart';
 import 'package:freight_hub/utils/constants/texts.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import '../../../../data/api/get_driver.dart';
+import '../../../../navigation_menu.dart';
 import '../../../../utils/constants/colors.dart';
+import '../vehicle_information/vehicle_documents.dart';
 import '../vehicle_information/vehicle_registration.dart';
 import '../vehicle_information/vehicle_selection.dart';
 
@@ -62,7 +65,16 @@ class _RequiredDocumentsState extends State<RequiredDocuments> {
           return;
         } else if (data['data']['driver']['completion'] == 3) {
           // Navigate to another screen
-          Get.off(() => const VehicleRegistrationScreen());
+          if (data['data']['vehicle']['completion'] == 1) {
+            Get.off(() => const VehicleDocumentsScreen());
+          } else if (data['data']['vehicle']['completion'] == 2) {
+            // if (data['data']['driver']['verifyStatus'] == "completed") {
+            //
+            // }
+            Get.off(() => const NavigationMenu());
+          } else {
+            Get.off(() => const VehicleRegistrationScreen());
+          }
           return;
         }// Add more here
       } else {

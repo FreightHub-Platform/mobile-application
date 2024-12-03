@@ -265,16 +265,16 @@ class _VehicleSelectionScreenState extends State<VehicleSelectionScreen> {
           vTypeId: int.tryParse(selectedVTypeId)
       );
 
-      Get.off(() => const VehicleRegistrationScreen());
+      // Get.off(() => const VehicleRegistrationScreen());
 
-      // if (response.statusCode == 200) {
-      //   Get.off(() => const VehicleRegistrationScreen());
-      // } else {
-      //   setState(() {
-      //     _error = 'Failed to submit vehicle selection';
-      //     _isLoading = false;
-      //   });
-      // }
+      if (response.statusCode == 200) {
+        Get.off(() => const VehicleRegistrationScreen());
+      } else {
+        setState(() {
+          _error = 'Failed to submit vehicle selection';
+          _isLoading = false;
+        });
+      }
     } catch (e) {
       setState(() {
         _error = e.toString();

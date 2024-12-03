@@ -125,8 +125,8 @@ class _TLoginFormState extends State<TLoginForm> {
             );
 
             await Future.delayed(const Duration(seconds: 1));
-            // Get.off(() => const RequiredDocuments());
-            Get.off(() => const ThankYouScreen());
+            Get.off(() => const RequiredDocuments());
+            // Get.off(() => const ThankYouScreen());
 
           } else {
             Get.snackbar(

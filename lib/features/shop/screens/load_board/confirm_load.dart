@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:freight_hub/data/api/update_route_status.dart';
 import 'package:freight_hub/features/shop/screens/load_board/load_board.dart';
 import 'package:freight_hub/features/shop/screens/load_board/widgets/route_model.dart';
+import 'package:freight_hub/navigation_menu.dart';
 import 'package:freight_hub/utils/constants/sizes.dart';
 import 'package:get/get.dart';
 
@@ -74,7 +75,7 @@ class ConfirmLoadDialog extends StatelessWidget {
                             Get.back();
 
                             // Navigate to LoadBoardScreen and switch to Confirmed tab
-                            Get.offAll(() => const LoadBoardScreen(),
+                            Get.offAll(() => const NavigationMenu(),
                                 arguments: 1  // Pass index 1 to switch to Confirmed tab
                             );
                           }

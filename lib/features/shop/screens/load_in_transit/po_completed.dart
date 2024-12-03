@@ -100,8 +100,8 @@ class _PoCompletedScreenState extends State<PoCompletedScreen> {
             pickupLocation = posData[sequenceId - 2]['storeName'];
             dropOffLocation = posData[sequenceId - 1]['storeName'];
 
-            _consigner = posData[sequenceId - 2]['storeName'] ?? '';
-            _consignerContact = posData[sequenceId - 2]['storeContact'].toString() ?? '';
+            _consigner = consigner.toString() ?? '';
+            _consignerContact = consignerContact.toString() ?? '';
             _consignee = posData[sequenceId - 1]['storeName'] ?? '';
             _consigneeContact = posData[sequenceId - 1]['storeContact'].toString() ?? '';
           }

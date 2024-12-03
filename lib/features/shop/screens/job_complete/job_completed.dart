@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:freight_hub/data/api/credit_transaction.dart';
+import 'package:freight_hub/navigation_menu.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
@@ -113,7 +114,7 @@ class _JobCompletedScreenState extends State<JobCompletedScreen> {
         );
 
         // Navigate to LoadBoardScreen
-        Get.offAll(() => const LoadBoardScreen());
+        Get.offAll(() => const NavigationMenu());
       } else {
         // Handle API error
         ScaffoldMessenger.of(context).showSnackBar(
